@@ -11,12 +11,12 @@ class BingoCardWidget extends StatelessWidget {
   final Function(int row, int col)? onCellTap;
 
   const BingoCardWidget({
-    Key? key,
+    super.key,
     required this.card,
     this.winningCells,
     this.interactive = false,
     this.onCellTap,
-  }) : super(key: key);
+  });
 
   bool _isWinningCell(int row, int col) {
     if (winningCells == null) return false;
@@ -46,12 +46,11 @@ class BingoCardWidget extends StatelessWidget {
         children: [
           // BINGO Header
           _buildHeader(),
-          
           // Card Grid
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: AspectRatio(
-              aspectRatio: 1,
+              aspectRatio: 1.37,
               child: _buildGrid(),
             ),
           ),
@@ -90,8 +89,8 @@ class BingoCardWidget extends StatelessWidget {
 
   Widget _buildHeaderLetter(String letter, Color color) {
     return Container(
-      width: 40,
-      height: 40,
+      width: 30,
+      height: 30,
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
@@ -108,7 +107,7 @@ class BingoCardWidget extends StatelessWidget {
           letter,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 24,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
@@ -128,8 +127,9 @@ class BingoCardWidget extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 5,
-        crossAxisSpacing: 6,
-        mainAxisSpacing: 6,
+        crossAxisSpacing: 2,
+        mainAxisSpacing: 2,
+        childAspectRatio: 1.39
       ),
       itemCount: 25,
       itemBuilder: (context, index) {

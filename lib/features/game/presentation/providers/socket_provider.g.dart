@@ -26,7 +26,7 @@ final socketServiceProvider = AutoDisposeProvider<SocketService>.internal(
 // ignore: unused_element
 typedef SocketServiceRef = AutoDisposeProviderRef<SocketService>;
 String _$socketEventListenerHash() =>
-    r'fa61df5fc8a9ca3db5af27649c1dd390d1f5d49b';
+    r'5ac35504495436da3f2421162e17cdad0c57b787';
 
 /// Socket event listener provider
 ///

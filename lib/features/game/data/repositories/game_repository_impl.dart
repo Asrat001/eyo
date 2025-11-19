@@ -1,3 +1,4 @@
+import 'package:eyo_bingo/core/data/models/game_model.dart';
 import 'package:logger/logger.dart';
 import '../../../../core/domain/entities/game.dart';
 import '../../../../core/domain/entities/bingo_card.dart';
@@ -65,8 +66,7 @@ class GameRepositoryImpl implements GameRepository {
   @override
   Future<void> leaveGame(String gameId, String playerId) async {
     final response = await _remoteDataSource.leaveGame(gameId, playerId);
-
-    return response.when(
+     response.when(
       success: (_) async {
         // Optionally remove from local storage
         await _localDataSource.deleteGame(gameId);

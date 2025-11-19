@@ -10,12 +10,12 @@ class BingoCellWidget extends StatefulWidget {
   final bool animate;
 
   const BingoCellWidget({
-    Key? key,
+    super.key,
     required this.cell,
     this.onTap,
     this.isWinningCell = false,
     this.animate = true,
-  }) : super(key: key);
+  });
 
   @override
   State<BingoCellWidget> createState() => _BingoCellWidgetState();
@@ -94,13 +94,13 @@ class _BingoCellWidgetState extends State<BingoCellWidget>
                   : widget.cell.isMarked
                       ? BingoColors.cellMarkedBorder
                       : BingoColors.cellBackground.withOpacity(0.3),
-              width: widget.isWinningCell ? 3 : 2,
+              width: widget.isWinningCell ? 1 : 0.5,
             ),
             boxShadow: widget.cell.isMarked
                 ? [
                     BoxShadow(
                       color: BingoColors.cellMarkedBorder.withOpacity(0.3),
-                      blurRadius: 8,
+                      blurRadius: 4,
                       spreadRadius: 1,
                     ),
                   ]
@@ -108,7 +108,7 @@ class _BingoCellWidgetState extends State<BingoCellWidget>
                     ? [
                         BoxShadow(
                           color: BingoColors.primaryGold.withOpacity(0.5),
-                          blurRadius: 12,
+                          blurRadius: 8,
                           spreadRadius: 2,
                         ),
                       ]
@@ -122,14 +122,14 @@ class _BingoCellWidgetState extends State<BingoCellWidget>
                       Icon(
                         Icons.star,
                         color: BingoColors.primaryGold,
-                        size: 24,
+                        size: 18,
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'FREE',
                         style: TextStyle(
                           color: BingoColors.primaryGold,
-                          fontSize: 10,
+                          fontSize: 8,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
                         ),
@@ -145,7 +145,7 @@ class _BingoCellWidgetState extends State<BingoCellWidget>
                           color: widget.cell.isMarked
                               ? Colors.white
                               : Colors.white.withOpacity(0.9),
-                          fontSize: 20,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

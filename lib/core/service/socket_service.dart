@@ -40,7 +40,7 @@ class SocketService {
         IO.OptionBuilder()
             .setTransports(['websocket'])
             .disableAutoConnect()
-            .setAuth(token != null ? {'token': token} : null)
+            // .setAuth(token != null ? {'token': token} : null)
             .setReconnectionAttempts(5)
             .setReconnectionDelay(2000)
             .build(),

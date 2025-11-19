@@ -8,11 +8,11 @@ class CalledNumbersDisplay extends StatelessWidget {
   final int maxDisplay;
 
   const CalledNumbersDisplay({
-    Key? key,
+    super.key,
     required this.calledNumbers,
     this.latestNumber,
     this.maxDisplay = 10,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +73,13 @@ class CalledNumbersDisplay extends StatelessWidget {
             Center(
               child: _buildBall(
                 latestNumber!,
-                size: 80,
+                size: 60,
                 isLatest: true,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 6),
             const Divider(color: Colors.white24),
-            const SizedBox(height: 12),
+            const SizedBox(height: 6),
           ],
           
           // Recent numbers (small)
@@ -89,7 +89,7 @@ class CalledNumbersDisplay extends StatelessWidget {
               runSpacing: 8,
               children: displayNumbers
                   .where((n) => n != latestNumber)
-                  .map((number) => _buildBall(number, size: 40))
+                  .map((number) => _buildBall(number, size: 30))
                   .toList(),
             )
           else

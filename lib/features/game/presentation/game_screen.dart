@@ -23,12 +23,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeDemoData();
-    
-    // Initialize socket event listener
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeDemoData();
       ref.read(socketEventListenerProvider);
     });
+    
+
   }
 
   void _initializeDemoData() {
@@ -134,6 +134,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0.0,
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: BingoColors.gameBackground,
@@ -143,12 +146,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             children: [
               // Header
               _buildHeader(),
-
               // Main content
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     // Responsive layout
+                    // return _buildWideLayout();
                     if (constraints.maxWidth > 900) {
                       return _buildWideLayout();
                     } else {
@@ -161,8 +164,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           ),
         ),
       ),
-      floatingActionButton: _buildFloatingBingoButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -242,7 +243,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Prize: \$${game?.prizePool ?? 0}',
+                      'Prize: \ETB ${game?.prizePool ?? 0}',
                       style: TextStyle(
                         color: BingoColors.primaryGold,
                         fontSize: 14,
@@ -301,10 +302,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Bingo card
-          _buildCardSection(),
-          const SizedBox(height: 16),
-
           // Called numbers
           CalledNumbersDisplay(
             calledNumbers: calledNumbers,
@@ -312,13 +309,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             maxDisplay: 8,
           ),
           const SizedBox(height: 16),
-
+          // Bingo card
+          _buildCardSection(),
+          const SizedBox(height: 16),
           // Players list
           PlayerListWidget(
             players: players,
             currentPlayerId: currentPlayerId,
-          ),
-          const SizedBox(height: 80), // Space for floating button
+          ), // Space for floating button
         ],
       ),
     );
@@ -337,19 +335,18 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Bingo card
             ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 500),
+              constraints: const BoxConstraints(maxWidth: 900),
               child: BingoCardWidget(
                 card: playerCard,
-                interactive: false,
+                interactive: true,
               ),
-            ),
-            const SizedBox(height: 80), // Space for floating button
+            ), // Space for floating button
           ],
         ),
       ),

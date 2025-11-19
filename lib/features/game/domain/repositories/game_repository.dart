@@ -1,5 +1,7 @@
-import '../../../data/models/game_model.dart';
-import '../../entities/game.dart';
+
+
+import 'package:eyo_bingo/core/domain/entities/bingo_card.dart';
+import 'package:eyo_bingo/core/domain/entities/game.dart';
 
 /// Repository interface for game operations
 /// Follows clean architecture - implementation will be in data layer

@@ -86,7 +86,6 @@ class LoginScreen extends StatelessWidget {
                 RoundedButton(
                   buttonText: 'Sign In',
                   onPressed: () {
-
                     context.push(Routes.homeRouteName);
                   }
                 ),

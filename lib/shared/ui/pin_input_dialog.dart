@@ -85,7 +85,7 @@ class _PinInputDialogState extends State<PinInputDialog> {
                   TextButton(
                     onPressed: () {
                       if (currentPin.length == 4) {
-                        Navigator.pop(context, currentPin);
+
                       }
                     },
                     child: const Text('Submit',style: TextStyle(color: Colors.green),),

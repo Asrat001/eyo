@@ -1,10 +1,7 @@
+import 'package:eyo_bingo/core/service/socket_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../core/service/socket_service.dart';
-import '../../../core/domain/entities/game.dart';
-import '../../../core/domain/entities/player.dart';
-import '../../../di.dart';
+import '../../../../di.dart';
 import 'game_provider.dart';
-
 part 'socket_provider.g.dart';
 
 /// Socket service provider

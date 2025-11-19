@@ -100,7 +100,7 @@ final currentGameProvider =
     );
 
 typedef _$CurrentGame = AutoDisposeNotifier<Game?>;
-String _$playerCardHash() => r'b3ad3d7da4f9a0ef4b3bfd4ca8ced56dc2b282f5';
+String _$playerCardHash() => r'3138a4f144a45383c675e5811903f0ddf7dca54f';
 
 /// Player's bingo card provider
 ///

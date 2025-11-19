@@ -1,10 +1,12 @@
+import 'package:eyo_bingo/core/domain/entities/bingo_card.dart';
+import 'package:eyo_bingo/core/domain/entities/game.dart';
+import 'package:eyo_bingo/core/domain/entities/player.dart';
+import 'package:eyo_bingo/core/game_engine/game_coordinator.dart';
+import 'package:eyo_bingo/core/service/socket_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../core/domain/entities/game.dart';
-import '../../../core/domain/entities/bingo_card.dart';
-import '../../../core/domain/entities/player.dart';
-import '../../../core/game_engine/game_coordinator.dart';
-import '../../../core/service/socket_service.dart';
-import '../../../di.dart';
+
+import '../../../../di.dart';
+
 
 part 'game_provider.g.dart';
 
