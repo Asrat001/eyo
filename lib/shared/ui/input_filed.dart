@@ -45,7 +45,7 @@ class InputField extends StatelessWidget {
         ),
         const SizedBox(height: 4), // Space between label and field
         SizedBox(
-          height: 80,
+          height: 40,
           child: TextFormField(
             style: const TextStyle(
               color:AppColors.primary,

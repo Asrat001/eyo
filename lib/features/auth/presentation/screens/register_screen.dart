@@ -5,6 +5,7 @@ import 'package:eyo_bingo/shared/ui/input_filed.dart';
 import 'package:eyo_bingo/shared/ui/outlined_button.dart';
 import 'package:eyo_bingo/shared/ui/rounded_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,6 +26,9 @@ class RegisterScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: SizedBox.shrink(),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          systemNavigationBarColor: AppColors.primary,
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -40,11 +44,10 @@ class RegisterScreen extends StatelessWidget {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 20),
                   // Logo with enhanced styling
                   Container(
                     padding: EdgeInsets.all(20),
@@ -57,7 +60,7 @@ class RegisterScreen extends StatelessWidget {
                           AppColors.foundation.withOpacity(0.3),
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(100),
                       boxShadow: [
                         BoxShadow(
                           color: AppColors.foundation.withOpacity(0.3),
@@ -75,7 +78,7 @@ class RegisterScreen extends StatelessWidget {
                     ),
                   ),
                   
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 16),
                   // Title
                   Text(
                     'Create Account',
@@ -95,11 +98,11 @@ class RegisterScreen extends StatelessWidget {
                     ),
                   ),
                   
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 16),
                   
                   // Form Container
                   Container(
-                    padding: EdgeInsets.all(24),
+                    padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
@@ -141,7 +144,7 @@ class RegisterScreen extends StatelessWidget {
                           obscureText: true,
                           keyboardType: TextInputType.visiblePassword,
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 8),
                         // Sign Up button
                         RoundedButton(
                           buttonText: 'Sign Up',
@@ -153,7 +156,7 @@ class RegisterScreen extends StatelessWidget {
                     ),
                   ),
                   
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 16),
                   
                   // Admin Access Info
                   Container(
