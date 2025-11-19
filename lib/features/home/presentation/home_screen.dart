@@ -267,15 +267,16 @@ Widget _buildNewGameCard(BuildContext context, int index) {
                     size: 16,
                   ),
                   SizedBox(width: 4),
-                  Text(
-                    "ETB ${prizes[index]}",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.amber,
+                  Expanded(
+                    child: Text(
+                      "ETB ${prizes[index]}",
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.amber,
+                      ),
                     ),
                   ),
-                  Spacer(),
                   Icon(
                     Icons.timer_outlined,
                     color: Colors.grey.shade400,

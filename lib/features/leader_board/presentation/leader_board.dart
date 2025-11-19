@@ -28,7 +28,7 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 3, vsync: this,);
   }
 
   @override
@@ -40,6 +40,9 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0.0,
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -74,23 +77,18 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: 8),
                     // Tabs
                     Container(
                       decoration: BoxDecoration(
-                        color: Color(0xFF1A202C),
+                        color: Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: TabBar(
                         controller: _tabController,
-                        indicator: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.amber.shade600, Colors.amber.shade800],
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
                         labelColor: Colors.white,
                         unselectedLabelColor: AppColors.lightGrey.withOpacity(0.6),
+                        isScrollable: false,
                         labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                         tabs: [
                           Tab(text: 'All Time'),
@@ -136,7 +134,7 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
         // Top 3 Podium
         _buildPodium(players.take(3).toList()),
         
-        SizedBox(height: 16),
+        SizedBox(height: 8),
         
         // Rest of the rankings
         Expanded(
@@ -165,13 +163,13 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // 2nd Place
-          _buildPodiumPlace(second, 2, 140, Colors.grey.shade400),
+          _buildPodiumPlace(second, 2, 120, Colors.grey.shade400),
           SizedBox(width: 12),
           // 1st Place
-          _buildPodiumPlace(first, 1, 180, Colors.amber),
+          _buildPodiumPlace(first, 1, 140, Colors.amber),
           SizedBox(width: 12),
           // 3rd Place
-          _buildPodiumPlace(third, 3, 120, Colors.orange.shade700),
+          _buildPodiumPlace(third, 3, 100, Colors.orange.shade700),
         ],
       ),
     );
@@ -306,6 +304,7 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Rank
           Container(
@@ -327,7 +326,7 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
               ),
             ),
           ),
-          SizedBox(width: 16),
+          SizedBox(width: 8),
           // Avatar
           Container(
             width: 50,
@@ -342,7 +341,7 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
               child: Text(player.avatar, style: TextStyle(fontSize: 24)),
             ),
           ),
-          SizedBox(width: 16),
+          SizedBox(width: 8),
           // Info
           Expanded(
             child: Column(
@@ -372,10 +371,10 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
                     Icon(Icons.sports_esports, color: Colors.blue, size: 14),
                     SizedBox(width: 4),
                     Text(
-                      '${player.gamesPlayed} games',
+                      '${player.gamesPlayed}',
                       style: TextStyle(
                         color: AppColors.lightGrey.withOpacity(0.7),
-                        fontSize: 12,
+                        fontSize: 10,
                       ),
                     ),
                   ],
@@ -385,7 +384,7 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
           ),
           // Win Rate
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.green.shade600, Colors.green.shade800],
@@ -396,8 +395,8 @@ class _LeaderBoardState extends State<LeaderBoard> with SingleTickerProviderStat
               '$winRate%',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+                fontSize: 8,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),

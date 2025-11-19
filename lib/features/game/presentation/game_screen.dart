@@ -1,5 +1,7 @@
+import 'package:eyo_bingo/shared/routes/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/domain/entities/bingo_card.dart';
 import '../../../core/domain/entities/player.dart';
 import '../../../core/domain/entities/game.dart';
@@ -16,7 +18,7 @@ class GameScreen extends ConsumerStatefulWidget {
   final String? pin;
   final String? cartelaNumber;
   
-  const GameScreen({Key? key, this.pin, this.cartelaNumber}) : super(key: key);
+  const GameScreen({super.key, this.pin, this.cartelaNumber});
 
   @override
   ConsumerState<GameScreen> createState() => _GameScreenState();
@@ -136,7 +138,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   void _onLeaveGame() {
     // TODO: Implement leave game logic
-    Navigator.of(context).pop();
+    context.go(Routes.homeRouteName);
   }
 
   @override

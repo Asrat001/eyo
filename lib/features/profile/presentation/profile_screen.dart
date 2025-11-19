@@ -7,6 +7,9 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0.0,
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -335,7 +338,7 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-          Container(
+          SizedBox(
             height: 100,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -376,7 +379,7 @@ class ProfileScreen extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: AppColors.lightGrey,
-                          fontSize: 10,
+                          fontSize: 8,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
