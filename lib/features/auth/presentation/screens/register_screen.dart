@@ -19,128 +19,234 @@ class RegisterScreen extends StatelessWidget {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
 
-    return   Scaffold(// Dark navy background
+    return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0.0,
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: SizedBox.shrink(),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 28,vertical: 16),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                // Logo
-                // Logo
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.foundationSec,
-                    borderRadius: BorderRadius.circular(50),
-
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColors.primary,
+              AppColors.secondary,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  // Logo with enhanced styling
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.foundationSec,
+                          AppColors.foundation.withOpacity(0.3),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.foundation.withOpacity(0.3),
+                          blurRadius: 20,
+                          offset: Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icons/gaming_pad.svg',
+                      width: 80,
+                      height: 80,
+                      color: AppColors.foundation,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                  child: SvgPicture.asset(
-                    'assets/icons/gaming_pad.svg', // Placeholder: replace with actual asset or use SVG/Icon
-                    width: 60,
-                    height: 60,
-                    color: AppColors.foundation,
-                    fit: BoxFit.contain,
+                  
+                  const SizedBox(height: 40),
+                  // Title
+                  Text(
+                    'Create Account',
+                    style: TextStyle(
+                      color: AppColors.lightGrey,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 30),
-                Text(
-                  'Create An Account',
-                  style: TextStyle(
-                    color:AppColors.lightGrey,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w400,
+                  const SizedBox(height: 8),
+                  Text(
+                    'Sign up to start winning',
+                    style: TextStyle(
+                      color: AppColors.lightGrey.withOpacity(0.7),
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 25),
-                InputField(
-                  labelText: 'User Name',
-                  hintText: 'Enter your name',
-                  suffixIcon: Icon(Icons.person,color: Colors.grey.shade400,),
-                  keyboardType: TextInputType.phone,
-                  controller:emailController,
-                  obscureText: false,
-                ),
-                // Password field
-                InputField(
-                    labelText: "password",
-                    hintText: "Enter your password",
-                    controller: passwordController,
-                    suffixIcon: Icon(Icons.lock,color: Colors.grey.shade400),
-                    obscureText: true,
-                    keyboardType: TextInputType.visiblePassword
-                ),
-                InputField(
-                    labelText: "Confirm password",
-                    hintText: "Confirm your password",
-                    controller: passwordController,
-                    suffixIcon: Icon(Icons.lock,color: Colors.grey.shade400),
-                    obscureText: true,
-                    keyboardType: TextInputType.visiblePassword
-                ),
-                const SizedBox(height: 16),
-                // Sign In button
-                RoundedButton(
-                    buttonText: 'Sign Up',
-                    onPressed: () {
-                      context.push(Routes.homeRouteName);
-                    }
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 4,
-                  children: [
-                    Expanded(
-                      child:  Divider(
-                        height: 1,
-                        color: AppColors.lightGrey,
+                  
+                  const SizedBox(height: 40),
+                  
+                  // Form Container
+                  Container(
+                    padding: EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFF2D3748).withOpacity(0.6),
+                          Color(0xFF1A202C).withOpacity(0.6),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.1),
+                        width: 1,
                       ),
                     ),
-                    const Text(
-                      'Contact Us To Get Admin Access',
-                      style: TextStyle(color: AppColors.lightGrey,fontSize: 11),
+                    child: Column(
+                      children: [
+                        InputField(
+                          labelText: 'Username',
+                          hintText: 'Enter your username',
+                          suffixIcon: Icon(Icons.person, color: Colors.grey.shade400),
+                          keyboardType: TextInputType.text,
+                          controller: nameController,
+                          obscureText: false,
+                        ),
+                        InputField(
+                          labelText: "Password",
+                          hintText: "Enter your password",
+                          controller: passwordController,
+                          suffixIcon: Icon(Icons.lock, color: Colors.grey.shade400),
+                          obscureText: true,
+                          keyboardType: TextInputType.visiblePassword,
+                        ),
+                        InputField(
+                          labelText: "Confirm Password",
+                          hintText: "Confirm your password",
+                          controller: confirmPasswordController,
+                          suffixIcon: Icon(Icons.lock, color: Colors.grey.shade400),
+                          obscureText: true,
+                          keyboardType: TextInputType.visiblePassword,
+                        ),
+                        const SizedBox(height: 24),
+                        // Sign Up button
+                        RoundedButton(
+                          buttonText: 'Sign Up',
+                          onPressed: () {
+                            context.go(Routes.homeRouteName);
+                          },
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: const Divider(
-                        height: 1,
-                        color: AppColors.lightGrey,
+                  ),
+                  
+                  const SizedBox(height: 32),
+                  
+                  // Admin Access Info
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.amber.withOpacity(0.1),
+                          Colors.orange.withOpacity(0.1),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.amber.withOpacity(0.3),
+                        width: 1,
                       ),
                     ),
-                  ],
-                ),
-                const Text(
-                  '0916562124 / 0947635677',
-                  style: TextStyle(color: AppColors.lightGrey,fontSize: 12,fontWeight: FontWeight.bold),
-                ),
-
-                const SizedBox(height: 16),
-                // Sign up link
-                GestureDetector(
-                  onTap: () {
-                    context.push(Routes.loginRouteName);
-                  },
-                  child:  Text.rich(
-                      TextSpan(
-                          text: 'You Already have an account? ',
-                          style: const TextStyle(color: AppColors.lightGrey,fontSize: 14),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.admin_panel_settings,
+                          color: Colors.amber,
+                          size: 32,
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          'Need Admin Access?',
+                          style: TextStyle(
+                            color: AppColors.lightGrey,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Contact us for admin privileges',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.lightGrey.withOpacity(0.7),
+                            fontSize: 13,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            TextSpan(
-                              text: 'Sign In',
-                              style: TextStyle(color: AppColors.foundation,fontSize: 14,fontWeight: FontWeight.bold),
+                            Icon(Icons.phone, color: Colors.amber, size: 16),
+                            SizedBox(width: 6),
+                            Text(
+                              '0916562124 / 0947635677',
+                              style: TextStyle(
+                                color: Colors.amber,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ]
-                      )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 32),
+                  // Sign in link
+                  GestureDetector(
+                    onTap: () {
+                      context.push(Routes.loginRouteName);
+                    },
+                    child: Text.rich(
+                      TextSpan(
+                        text: 'Already have an account? ',
+                        style: const TextStyle(
+                          color: AppColors.lightGrey,
+                          fontSize: 15,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: 'Sign In',
+                            style: TextStyle(
+                              color: AppColors.foundation,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),
