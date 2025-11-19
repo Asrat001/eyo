@@ -1,5 +1,6 @@
 
 import 'package:eyo_bingo/features/auth/presentation/screens/register_screen.dart';
+import 'package:eyo_bingo/features/game/presentation/game_screen.dart';
 import 'package:eyo_bingo/features/home/presentation/home_screen.dart';
 import 'package:eyo_bingo/features/leader_board/presentation/leader_board.dart';
 import 'package:eyo_bingo/shared/routes/route_names.dart';
@@ -34,6 +35,10 @@ class AppRouter  {
         builder: (context, state) =>  RegisterScreen(),
       ),
 
+      GoRoute(
+        path: '/game',
+        builder: (context, state) => const GameScreen(),
+      ),
 
      StatefulShellRoute.indexedStack(
        builder: (context, state, navigationShell) => MainScreen(navigationShell: navigationShell),

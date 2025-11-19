@@ -1,0 +1,15 @@
+targets:
+  $default:
+    builders:
+      freezed:freezed:
+        enabled: true
+        generate_for:
+          - lib/**/*.dart
+      json_serializable:json_serializable:
+        enabled: true
+        generate_for:
+          - lib/**/*.dart
+      riverpod_generator:riverpod_generator:
+        enabled: true
+        generate_for:
+          - lib/**/*.dart
