@@ -2,7 +2,7 @@ import 'package:eyo_bingo/shared/theme/app_colors.dart';
 import 'package:eyo_bingo/shared/ui/home_app_bar.dart';
 import 'package:eyo_bingo/shared/ui/pin_input_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

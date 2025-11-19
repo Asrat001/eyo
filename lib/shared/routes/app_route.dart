@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
+import '../../features/wallet/presentation/wallet_screen.dart';
 import 'main_screen.dart';
 
 class AppRouter  {
@@ -50,6 +51,12 @@ class AppRouter  {
           final pin = state.pathParameters['pin'] ?? '';
           final cartela = state.pathParameters['cartela'] ?? '';
           return GameScreen(pin: pin, cartelaNumber: cartela);
+        },
+      ),
+      GoRoute(
+        path: '/wallet',
+        builder: (context, state) {
+          return const WalletScreen();
         },
       ),
 

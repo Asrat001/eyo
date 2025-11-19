@@ -1,5 +1,7 @@
+
 import 'package:eyo_bingo/shared/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget
     {
@@ -13,7 +15,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget
       bottom:PreferredSize(preferredSize: Size.fromHeight(100),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: _buildBonusCard(),
+        child: _buildBonusCard(context),
       )
       )
     );
@@ -26,7 +28,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget
 }
 
 
-Widget _buildBonusCard() {
+Widget _buildBonusCard(BuildContext context) {
   return Container(
     width: double.infinity,
     decoration: BoxDecoration(
@@ -49,13 +51,18 @@ Widget _buildBonusCard() {
         const Text("ETB 0.00",
             style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold,color: AppColors.lightGrey)),
         const SizedBox(height: 6),
-        Row(
-          children: const [
-            Text("Contact Your Admin For Recharge",
-                style: TextStyle(color: Colors.amber, fontSize: 12)),
-            SizedBox(width: 6),
-            Icon(Icons.arrow_right_alt, color: Colors.amber),
-          ],
+        GestureDetector(
+          onTap: () {
+            context.push("/wallet");
+          },
+          child: Row(
+            children: const [
+              Text("Contact Your Admin For Recharge",
+                  style: TextStyle(color: Colors.amber, fontSize: 12)),
+              SizedBox(width: 6),
+              Icon(Icons.arrow_right_alt, color: Colors.amber),
+            ],
+          ),
         )
       ],
     ),

@@ -65,6 +65,9 @@ class AppTheme {
         backgroundColor:AppColors.primary,
         scrolledUnderElevation: 0.0,
         centerTitle: true,
+        iconTheme: IconThemeData(
+          color: Colors.white
+        ),
         titleTextStyle: TextStyle(
           color: AppColors.white,
           fontSize: 16,

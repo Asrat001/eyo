@@ -8,7 +8,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 0.0,
+       title: Text("Asrat001"),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -26,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               children: [
                 // Profile Header
-                _buildProfileHeader(),
+                // _buildProfileHeader(),
                 
                 SizedBox(height: 20),
                 
@@ -38,10 +38,7 @@ class ProfileScreen extends StatelessWidget {
                 // Achievements Section
                 _buildAchievementsSection(),
                 
-                SizedBox(height: 20),
-                
-                // Recent Games
-                _buildRecentGamesSection(),
+
                 
                 SizedBox(height: 20),
                 

@@ -42,11 +42,10 @@ class LoginScreen extends StatelessWidget {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 20),
                   // Logo with enhanced styling
                   Container(
                     padding: EdgeInsets.all(20),
@@ -59,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                           AppColors.foundation.withOpacity(0.3),
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(100),
                       boxShadow: [
                         BoxShadow(
                           color: AppColors.foundation.withOpacity(0.3),
@@ -77,7 +76,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 16),
                   // Welcome text
                   Text(
                     'Welcome Back!',
@@ -97,11 +96,11 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 16),
                   
                   // Form Container
                   Container(
-                    padding: EdgeInsets.all(24),
+                    padding: EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
