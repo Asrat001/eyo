@@ -14,5 +14,6 @@ class Routes{
   static String resourceRouteName="/resource";
   static String profileRouteName = '/profile';
   static String splashRouteName = '/splash';
+  static String cartelaSelectionRouteName = '/cartela-selection';
 
 }

@@ -11,148 +11,196 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: HomeAppBar(),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                      child: _buildFeatureCard(
-                          "Contest",
-                          SvgPicture.network(
-                            "https://www.svgrepo.com/show/422155/banknote-cash-cheque.svg",
-                            width: 50,
-                            height: 50,
-                          ))),
-                  const SizedBox(width: 16),
-                  Expanded(
-                      child: _buildFeatureCard(
-                          "Spin",
-                          SvgPicture.network(
-                            "https://www.svgrepo.com/show/422158/casino-game-leisure.svg",
-                            width: 50,
-                            height: 50,
-                          ))),
-                  const SizedBox(width: 16),
-                  Expanded(
-                      child: _buildFeatureCard(
-                          "Gifts",
-                          SvgPicture.network(
-                            "https://www.svgrepo.com/show/422162/bet-casino-gamble-2.svg",
-                            width: 50,
-                            height: 50,
-                          ))),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                "Bingo's",
-                style: TextStyle(
-                    color: AppColors.lightGrey,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 28),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return _buildNewGameCard(context);
-                  },
-                  separatorBuilder: (context, index) => const SizedBox(height: 6),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.primary,
+                AppColors.secondary,
+              ],
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Feature Cards Row
+                Row(
+                  children: [
+                    Expanded(
+                        child: _buildFeatureCard(
+                            "Contest",
+                            Icons.emoji_events_outlined,
+                            Colors.amber.shade600,
+                            Colors.amber.shade800)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                        child: _buildFeatureCard(
+                            "Spin",
+                            Icons.casino_outlined,
+                            Colors.purple.shade600,
+                            Colors.purple.shade800)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                        child: _buildFeatureCard(
+                            "Gifts",
+                            Icons.card_giftcard_outlined,
+                            Colors.pink.shade600,
+                            Colors.pink.shade800)),
+                  ],
                 ),
-              )
-            ],
+                const SizedBox(height: 24),
+                // Section Title
+                Row(
+                  children: [
+                    Text(
+                      "Live Bingo Games",
+                      style: TextStyle(
+                          color: AppColors.lightGrey,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 24,
+                          letterSpacing: 0.5),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.circle, size: 8, color: Colors.white),
+                          SizedBox(width: 4),
+                          Text(
+                            "LIVE",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // Games List
+                Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return _buildNewGameCard(context, index);
+                    },
+                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                  ),
+                )
+              ],
+            ),
           ),
         ));
   }
 }
 
-Widget _buildFeatureCard(String title, Widget icon, [String? badge]) {
-  return Stack(
-    children: [
-      Container(
-        width: 100,
-        height: 100,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
+
+Widget _buildFeatureCard(String title, IconData icon, Color startColor, Color endColor) {
+  return Container(
+    height: 110,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [startColor, endColor],
+      ),
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: startColor.withOpacity(0.3),
+          blurRadius: 8,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 40, color: Colors.white),
+        const SizedBox(height: 8),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+// Enhanced Game Card
+Widget _buildNewGameCard(BuildContext context, int index) {
+  // Demo data - in production this would come from the game model
+  final playerCounts = [12, 8, 15, 20, 5];
+  final patterns = ["Any Line", "Full House", "Two Lines", "Four Corners", "Any Line"];
+  final intervals = ["3.0 s", "2.5 s", "3.5 s", "4.0 s", "3.0 s"];
+  final prizes = [500, 1000, 750, 1200, 600];
+
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          const Color(0xFF2D3748),
+          const Color(0xFF1A202C),
+        ],
+      ),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: Colors.amber.withOpacity(0.3),
+        width: 1,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          blurRadius: 8,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    padding: const EdgeInsets.all(16),
+    child: Row(
+      children: [
+        // Game Icon
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
                 Colors.amber.shade600,
-                Color(0xFF1E293B),
-              ]),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            icon,
-            const SizedBox(height: 6),
-            Text(title,
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.lightGrey)),
-          ],
-        ),
-      ),
-      if (badge != null)
-        Positioned(
-          top: 6,
-          right: 6,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: Colors.amber,
-              borderRadius: BorderRadius.circular(6),
+                Colors.amber.shade800,
+              ],
             ),
-            child: Text(
-              badge,
-              style: const TextStyle(
-                  fontSize: 10,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold),
-            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            Icons.grid_on_rounded,
+            color: Colors.white,
+            size: 32,
           ),
         ),
-    ],
-  );
-}
-
-// The New Game Card (same as earlier)
-Widget _buildNewGameCard(BuildContext context) {
-  return Container(
-    decoration: BoxDecoration(
-      color: const Color(0xFF1E293B),
-      borderRadius: BorderRadius.circular(16),
-    ),
-    padding: const EdgeInsets.all(12),
-    child: Row(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: SvgPicture.network(
-            'https://www.svgrepo.com/show/422179/ball-billiard-championship.svg',
-            height: 50,
-            width: 50,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Container(
-              height: 50,
-              width: 50,
-              color: Colors.grey,
-              child: Icon(
-                Icons.error,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 16),
+        // Game Info
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,90 +210,144 @@ Widget _buildNewGameCard(BuildContext context) {
                   Icon(
                     Icons.people_alt_outlined,
                     color: Colors.grey.shade400,
-                    size: 18,
+                    size: 16,
                   ),
+                  SizedBox(width: 4),
                   Text(
-                    "12",
+                    "${playerCounts[index]} Players",
                     style: TextStyle(
-                        fontSize: 12,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.lightGrey,
+                    ),
+                  ),
+                  Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      "NEW",
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.lightGrey),
+                      ),
+                    ),
                   ),
                 ],
               ),
+              const SizedBox(height: 6),
               Row(
                 children: [
                   Icon(
                     Icons.pattern_outlined,
                     color: Colors.grey.shade400,
-                    size: 18,
+                    size: 16,
                   ),
+                  SizedBox(width: 4),
                   Text(
-                    "Any Line",
+                    patterns[index],
                     style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.lightGrey),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.lightGrey,
+                    ),
                   ),
                 ],
               ),
+              const SizedBox(height: 6),
               Row(
                 children: [
                   Icon(
-                    Icons.shutter_speed_outlined,
-                    color: Colors.grey.shade400,
-                    size: 18,
+                    Icons.emoji_events,
+                    color: Colors.amber,
+                    size: 16,
                   ),
+                  SizedBox(width: 4),
                   Text(
-                    "3.0 s",
+                    "ETB ${prizes[index]}",
                     style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.lightGrey),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.amber,
+                    ),
+                  ),
+                  Spacer(),
+                  Icon(
+                    Icons.timer_outlined,
+                    color: Colors.grey.shade400,
+                    size: 16,
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    intervals[index],
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.lightGrey,
+                    ),
                   ),
                 ],
               ),
             ],
           ),
         ),
+        const SizedBox(width: 12),
+        // Join Button
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: Colors.amber,
-            borderRadius: BorderRadius.circular(6),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.amber.shade400,
+                Colors.amber.shade700,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.amber.withOpacity(0.4),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: const Text("NEW",
-              style: TextStyle(
-                  fontSize: 8,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold)),
-        ),
-        const SizedBox(width: 8),
-        SizedBox(
-          height: 25,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber,
+              backgroundColor: Colors.transparent,
               foregroundColor: Colors.black,
-              shape: const StadiumBorder(),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+              shadowColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
             onPressed: () {
               showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  useRootNavigator: true,
-                  builder: (context) {
-                    return const PinInputDialog();
-                  });
+                context: context,
+                isScrollControlled: true,
+                useRootNavigator: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return const PinInputDialog();
+                },
+              );
             },
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.circle, size: 6, color: Colors.red),
+                Icon(Icons.login, size: 16, color: Colors.black87),
                 SizedBox(width: 6),
                 Text(
                   "Join",
-                  style: TextStyle(fontSize: 10),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
               ],
             ),

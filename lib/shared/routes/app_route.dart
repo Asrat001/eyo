@@ -1,5 +1,6 @@
 
 import 'package:eyo_bingo/features/auth/presentation/screens/register_screen.dart';
+import 'package:eyo_bingo/features/cartela_selection/presentation/cartela_selcetion.dart';
 import 'package:eyo_bingo/features/game/presentation/game_screen.dart';
 import 'package:eyo_bingo/features/home/presentation/home_screen.dart';
 import 'package:eyo_bingo/features/leader_board/presentation/leader_board.dart';
@@ -36,8 +37,20 @@ class AppRouter  {
       ),
 
       GoRoute(
-        path: '/game',
-        builder: (context, state) => const GameScreen(),
+        path: '/cartela-selection/:pin',
+        builder: (context, state) {
+          final pin = state.pathParameters['pin'] ?? '';
+          return CartelaSelectionScreen(pin: pin);
+        },
+      ),
+
+      GoRoute(
+        path: '/game/:pin/:cartela',
+        builder: (context, state) {
+          final pin = state.pathParameters['pin'] ?? '';
+          final cartela = state.pathParameters['cartela'] ?? '';
+          return GameScreen(pin: pin, cartelaNumber: cartela);
+        },
       ),
 
      StatefulShellRoute.indexedStack(

@@ -13,7 +13,10 @@ import 'providers/game_provider.dart';
 import 'providers/socket_provider.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
-  const GameScreen({Key? key}) : super(key: key);
+  final String? pin;
+  final String? cartelaNumber;
+  
+  const GameScreen({Key? key, this.pin, this.cartelaNumber}) : super(key: key);
 
   @override
   ConsumerState<GameScreen> createState() => _GameScreenState();
@@ -24,6 +27,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Log received parameters
+      if (widget.pin != null && widget.cartelaNumber != null) {
+        debugPrint('Game started with PIN: ${widget.pin}, Cartela: ${widget.cartelaNumber}');
+      }
+      
       _initializeDemoData();
       ref.read(socketEventListenerProvider);
     });
