@@ -1,25 +1,74 @@
-
+import 'package:eyo_bingo/features/auth/presentation/providers/auth_providers.dart';
 import 'package:eyo_bingo/shared/routes/route_names.dart';
 import 'package:eyo_bingo/shared/theme/app_colors.dart';
 import 'package:eyo_bingo/shared/ui/input_filed.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/ui/rounded_button.dart';
 
-
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-    final double screenWidth = size.width;
-    final double screenHeight = size.height;
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text;
+
+    // Call login action
+    final login = ref.read(loginActionProvider);
+    final result = await login(username: username, password: password);
+
+    if (!mounted) return;
+
+    result.when(
+      success: (user) {
+        // Navigate based on role
+        if (user.isSuperAdmin) {
+          context.go(Routes.superAdminHomeRouteName);
+        } else if (user.isAdmin) {
+          context.go(Routes.adminHomeRouteName);
+        } else {
+          context.go(Routes.homeRouteName);
+        }
+      },
+      failure: (error) {
+        // Error is already set in provider, show snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+   
+    final isLoading = ref.watch(authLoadingProvider);
+    final errorMessage = ref.watch(authErrorProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -28,21 +77,12 @@ class LoginScreen extends StatelessWidget {
         elevation: 0,
         leading: SizedBox.shrink(),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppColors.primary,
-              AppColors.secondary,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Form(
+              key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -75,7 +115,7 @@ class LoginScreen extends StatelessWidget {
                       fit: BoxFit.contain,
                     ),
                   ),
-
+      
                   const SizedBox(height: 16),
                   // Welcome text
                   Text(
@@ -95,9 +135,9 @@ class LoginScreen extends StatelessWidget {
                       fontSize: 16,
                     ),
                   ),
-
+      
                   const SizedBox(height: 16),
-                  
+      
                   // Form Container
                   Container(
                     padding: EdgeInsets.all(18),
@@ -118,22 +158,74 @@ class LoginScreen extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        // Email field
+                        // Error message
+                        if (errorMessage != null) ...[
+                          Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Colors.red.withOpacity(0.5),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    errorMessage,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                        ],
+      
+                        // Username field
                         InputField(
                           hintText: 'Enter your username',
-                          suffixIcon: Icon(Icons.person, color: Colors.grey.shade400),
+                          suffixIcon: Icon(
+                            Icons.person,
+                            color: Colors.grey.shade400,
+                          ),
                           labelText: 'Username',
-                          keyboardType: TextInputType.emailAddress,
-                          controller: emailController,
+                          keyboardType: TextInputType.text,
+                          controller: _usernameController,
                           obscureText: false,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Please enter your username';
+                            }
+                            return null;
+                          },
                         ),
                         // Password field
                         InputField(
                           hintText: "Enter your password",
                           labelText: "Password",
-                          controller: passwordController,
+                          controller: _passwordController,
                           obscureText: true,
                           keyboardType: TextInputType.visiblePassword,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 8),
                         // Forgot password
@@ -154,17 +246,16 @@ class LoginScreen extends StatelessWidget {
                         const SizedBox(height: 16),
                         // Sign In button
                         RoundedButton(
-                          buttonText: 'Sign In',
-                          onPressed: () {
-                            context.go(Routes.homeRouteName);
-                          },
+                          buttonText: isLoading ? 'Signing In...' : 'Sign In',
+                          onPressed: isLoading ? null : _handleLogin,
+                          isLoading: isLoading,
                         ),
                       ],
                     ),
                   ),
-
+      
                   const SizedBox(height: 32),
-                  
+      
                   // Divider
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -193,7 +284,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
+      
                   const SizedBox(height: 32),
                   // Sign up link
                   GestureDetector(
@@ -229,5 +320,4 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-
 }

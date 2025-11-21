@@ -16,12 +16,14 @@ class SocketService {
 
   // Event controllers
   final _connectionController = StreamController<bool>.broadcast();
-  final _gameEventController = StreamController<Map<String, dynamic>>.broadcast();
+  final _gameEventController =
+      StreamController<Map<String, dynamic>>.broadcast();
   final _errorController = StreamController<String>.broadcast();
 
   // Streams
   Stream<bool> get connectionStream => _connectionController.stream;
-  Stream<Map<String, dynamic>> get gameEventStream => _gameEventController.stream;
+  Stream<Map<String, dynamic>> get gameEventStream =>
+      _gameEventController.stream;
   Stream<String> get errorStream => _errorController.stream;
 
   bool get isConnected => _isConnected;
@@ -48,10 +50,14 @@ class SocketService {
 
       _setupEventListeners();
       _socket!.connect();
-      
+
       _logger.i('Connecting to socket server: $serverUrl');
     } catch (e, stackTrace) {
-      _logger.e('Failed to connect to socket server', error: e, stackTrace: stackTrace);
+      _logger.e(
+        'Failed to connect to socket server',
+        error: e,
+        stackTrace: stackTrace,
+      );
       _errorController.add('Connection failed: $e');
     }
   }
@@ -120,6 +126,57 @@ class SocketService {
       _currentGameId = null;
     });
 
+    // Number Bingo specific events
+    _socket!.on('bingoGameReady', (data) {
+      _logger.i('Bingo game ready');
+      _gameEventController.add({'event': 'bingoGameReady', 'data': data});
+    });
+
+    _socket!.on('bingoGameStarted', (data) {
+      _logger.i('Bingo game started');
+      _gameEventController.add({'event': 'bingoGameStarted', 'data': data});
+    });
+
+    _socket!.on('bingoNumberCalled', (data) {
+      _logger.i('Bingo number called: ${data['number']}');
+      _gameEventController.add({'event': 'bingoNumberCalled', 'data': data});
+    });
+
+    _socket!.on('playerJoinedBingo', (data) {
+      _logger.i('Player joined bingo: ${data['playerName']}');
+      _gameEventController.add({'event': 'playerJoinedBingo', 'data': data});
+    });
+
+    _socket!.on('cardSelected', (data) {
+      _logger.i('Card selected: ${data['cardNumber']}');
+      _gameEventController.add({'event': 'cardSelected', 'data': data});
+    });
+
+    _socket!.on('bingoWinner', (data) {
+      _logger.i('Bingo winner announced');
+      _gameEventController.add({'event': 'bingoWinner', 'data': data});
+    });
+
+    _socket!.on('bingoGamePaused', (data) {
+      _logger.i('Bingo game paused');
+      _gameEventController.add({'event': 'bingoGamePaused', 'data': data});
+    });
+
+    _socket!.on('bingoGameResumed', (data) {
+      _logger.i('Bingo game resumed');
+      _gameEventController.add({'event': 'bingoGameResumed', 'data': data});
+    });
+
+    _socket!.on('bingoGameStopped', (data) {
+      _logger.i('Bingo game stopped');
+      _gameEventController.add({'event': 'bingoGameStopped', 'data': data});
+    });
+
+    _socket!.on('bingoGameCompleted', (data) {
+      _logger.i('Bingo game completed');
+      _gameEventController.add({'event': 'bingoGameCompleted', 'data': data});
+    });
+
     _socket!.on('error', (data) {
       _logger.e('Server error: $data');
       _errorController.add('Server error: $data');
@@ -135,23 +192,39 @@ class SocketService {
     }
 
     _currentGameId = gameId;
-    _socket!.emit('game:join', {
-      'gameId': gameId,
-      'playerId': playerId,
-    });
-    
+    _socket!.emit('game:join', {'gameId': gameId, 'playerId': playerId});
+
     _logger.i('Joining game: $gameId');
+  }
+
+  /// Join a Number Bingo game room
+  void joinGameRoom(String gameId) {
+    if (!_isConnected || _socket == null) {
+      _logger.e('Cannot join game room - not connected');
+      _errorController.add('Not connected to server');
+      return;
+    }
+
+    _currentGameId = gameId;
+    _socket!.emit('joinGameRoom', gameId);
+    _logger.i('Joined game room: $gameId');
+  }
+
+  /// Leave a Number Bingo game room
+  void leaveGameRoom(String gameId) {
+    if (_socket == null) return;
+
+    _socket!.emit('leaveGameRoom', gameId);
+    _currentGameId = null;
+    _logger.i('Left game room: $gameId');
   }
 
   /// Leave current game
   void leaveGame(String gameId, String playerId) {
     if (_socket == null) return;
 
-    _socket!.emit('game:leave', {
-      'gameId': gameId,
-      'playerId': playerId,
-    });
-    
+    _socket!.emit('game:leave', {'gameId': gameId, 'playerId': playerId});
+
     _currentGameId = null;
     _logger.i('Left game: $gameId');
   }
@@ -163,11 +236,8 @@ class SocketService {
       return;
     }
 
-    _socket!.emit('bingo:claim', {
-      'gameId': gameId,
-      'playerId': playerId,
-    });
-    
+    _socket!.emit('bingo:claim', {'gameId': gameId, 'playerId': playerId});
+
     _logger.i('Bingo claimed by: $playerId');
   }
 
@@ -203,7 +273,7 @@ class SocketService {
     _socket = null;
     _isConnected = false;
     _currentGameId = null;
-    
+
     _logger.i('Disconnected from socket server');
   }
 

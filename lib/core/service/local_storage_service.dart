@@ -6,13 +6,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../utils/constants.dart';
 
-
 class LocalStorageService {
   SharedPreferences? _preferences;
   final FlutterSecureStorage _flutterSecuredStorage =
-  const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
+      const FlutterSecureStorage(
+        aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      );
 
   LocalStorageService() {
     _init();
@@ -155,46 +154,45 @@ class LocalStorageService {
     // Add any other auth-related data that needs to be cleared
   }
 
-  // /// Set user data - accepts UserData object and handles JSON encoding
-  // Future<void> setUserData(UserResponseModel userData) async {
-  //   debugPrint("setting user name at set user : ${userData.userName}");
-  //   if (_preferences == null) {
-  //     return;
-  //   }
-  //   try {
-  //     final userDataJson = jsonEncode(userData.toJson());
-  //     await _preferences?.setString(LocalStorageKey.userData, userDataJson);
-  //   } catch (e) {
-  //     debugPrint("Error saving user data ${e.toString()}");
-  //   }
-  // }
-  //
-  // /// Get user data - handles JSON decoding and returns UserData object
-  // UserResponseModel? getUserData() {
-  //   log('getting user  data: ');
-  //   if (_preferences == null) {
-  //     log('getting user  data: null error ');
-  //     return null;
-  //   }
-  //   final userDataJson = _preferences?.getString(LocalStorageKey.userData);
-  //   if (userDataJson == null) {
-  //     log('getting user  data: user null error ');
-  //     return null;
-  //   }
-  //   try {
-  //     return UserResponseModel.fromJson(jsonDecode(userDataJson));
-  //   } catch (e) {
-  //     log('Error decoding user data: $e');
-  //     return null;
-  //   }
-  // }
+  /// Set user data - accepts UserModel object and handles JSON encoding
+  Future<void> setUserData(dynamic userData) async {
+    debugPrint("setting user data: ${userData.toString()}");
+    if (_preferences == null) {
+      return;
+    }
+    try {
+      final userDataJson = jsonEncode(userData.toJson());
+      await _preferences?.setString(LocalStorageKey.userData, userDataJson);
+    } catch (e) {
+      debugPrint("Error saving user data ${e.toString()}");
+    }
+  }
 
-  // /// Delete user data
-  // Future<void> deleteUserData() async {
-  //   if (_preferences == null) {
-  //     return;
-  //   }
-  //   await _preferences?.remove(LocalStorageKey.userData);
-  // }
+  /// Get user data - handles JSON decoding and returns UserModel object
+  dynamic getUserData() {
+    log('getting user  data: ');
+    if (_preferences == null) {
+      log('getting user  data: null error ');
+      return null;
+    }
+    final userDataJson = _preferences?.getString(LocalStorageKey.userData);
+    if (userDataJson == null) {
+      log('getting user  data: user null error ');
+      return null;
+    }
+    try {
+      return jsonDecode(userDataJson);
+    } catch (e) {
+      log('Error decoding user data: $e');
+      return null;
+    }
+  }
+
+  /// Delete user data
+  Future<void> deleteUserData() async {
+    if (_preferences == null) {
+      return;
+    }
+    await _preferences?.remove(LocalStorageKey.userData);
+  }
 }
-

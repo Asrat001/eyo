@@ -1,582 +1,514 @@
+import 'package:eyo_bingo/features/auth/presentation/providers/auth_providers.dart';
+import 'package:eyo_bingo/shared/routes/route_names.dart';
 import 'package:eyo_bingo/shared/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider);
+
     return Scaffold(
-      appBar: AppBar(
-       title: Text("Asrat001"),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppColors.primary,
-              AppColors.secondary,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                // Profile Header
-                // _buildProfileHeader(),
-                
-                SizedBox(height: 20),
-                
-                // Statistics Cards
-                _buildStatisticsSection(),
-                
-                SizedBox(height: 20),
-                
-                // Achievements Section
-                _buildAchievementsSection(),
-                
-
-                
-                SizedBox(height: 20),
-                
-                // Settings/Actions
-                _buildSettingsSection(),
-                
-                SizedBox(height: 20),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileHeader() {
-    return Container(
-      padding: EdgeInsets.all(24),
-      child: Column(
-        children: [
-          // Avatar
-          Stack(
-            children: [
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.amber.shade400,
-                      Colors.amber.shade700,
-                    ],
+      backgroundColor: Color(0xFF0A0E27),
+      body: user == null
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.person_off, size: 80, color: Colors.white),
+                  SizedBox(height: 16),
+                  Text(
+                    'No user data',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
-                  border: Border.all(color: Colors.amber, width: 4),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.amber.withOpacity(0.5),
-                      blurRadius: 20,
-                      offset: Offset(0, 8),
+                  SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => context.go(Routes.loginRouteName),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.foundation,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
                     ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    '👤',
-                    style: TextStyle(fontSize: 60),
+                    child: Text('Login', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            )
+          : CustomScrollView(
+              slivers: [
+                // App Bar with gradient
+                SliverAppBar(
+                  expandedHeight: 200,
+                  pinned: true,
+                  backgroundColor: AppColors.primary,
+                 systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+              ),
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AppColors.foundation,
+                            AppColors.foundation.withOpacity(0.6),
+                            Color(0xFF0A0E27),
+                          ],
+                        ),
+                      ),
+                      child: SafeArea(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: 40),
+                            // Avatar with glow effect
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.foundation.withOpacity(
+                                      0.5,
+                                    ),
+                                    blurRadius: 30,
+                                    spreadRadius: 5,
+                                  ),
+                                ],
+                              ),
+                              child: CircleAvatar(
+                                radius: 40,
+                                backgroundColor: user.isSuperAdmin
+                                    ? Color(0xFF9333EA)
+                                    : user.isAdmin
+                                    ? Color(0xFF3B82F6)
+                                    : AppColors.foundation,
+                                child: Icon(
+                                  user.isSuperAdmin
+                                      ? Icons.admin_panel_settings
+                                      : user.isAdmin
+                                      ? Icons.shield
+                                      : Icons.person,
+                                  size: 40,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              user.username,
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(height: 6),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: user.isSuperAdmin
+                                    ? Color(0xFF9333EA).withOpacity(0.2)
+                                    : user.isAdmin
+                                    ? Color(0xFF3B82F6).withOpacity(0.2)
+                                    : AppColors.foundation.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: user.isSuperAdmin
+                                      ? Color(0xFF9333EA)
+                                      : user.isAdmin
+                                      ? Color(0xFF3B82F6)
+                                      : AppColors.foundation,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                user.isSuperAdmin
+                                    ? 'SUPER ADMIN'
+                                    : user.isAdmin
+                                    ? 'ADMIN'
+                                    : 'PLAYER',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                            ),
+                          
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.primary, width: 3),
-                  ),
-                  child: Icon(Icons.edit, color: Colors.white, size: 20),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          // Name
-          Text(
-            'Player Name',
-            style: TextStyle(
-              color: AppColors.lightGrey,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8),
-          // Username/ID
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: Color(0xFF1A202C),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.person_outline, color: Colors.amber, size: 16),
-                SizedBox(width: 6),
-                Text(
-                  '@player123',
-                  style: TextStyle(
-                    color: AppColors.lightGrey.withOpacity(0.8),
-                    fontSize: 14,
+
+                // Content
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Balance Card
+                        Container(
+                          padding: EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.1),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: user.isAdmin || user.isSuperAdmin
+                                        ? [Color(0xFFFBBF24), Color(0xFFF59E0B)]
+                                        : [
+                                            Color(0xFF10B981),
+                                            Color(0xFF059669),
+                                          ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Icon(
+                                  user.isAdmin || user.isSuperAdmin
+                                      ? Icons.stars_rounded
+                                      : Icons.account_balance_wallet_rounded,
+                                  color: Colors.white,
+                                  size: 32,
+                                ),
+                              ),
+                              SizedBox(width: 20),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      user.isAdmin || user.isSuperAdmin
+                                          ? 'Credits'
+                                          : 'Wallet Balance',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      user.isAdmin || user.isSuperAdmin
+                                          ? '${user.credits}'
+                                          : '\$${user.wallet.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 24),
+
+                        // Account Details
+                        Text(
+                          'ACCOUNT DETAILS',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+
+                        _buildInfoTile(
+                          icon: Icons.person_outline,
+                          label: 'Username',
+                          value: user.username,
+                          color: Color(0xFF3B82F6),
+                        ),
+                        SizedBox(height: 12),
+                        _buildInfoTile(
+                          icon: Icons.fingerprint,
+                          label: 'User ID',
+                          value: user.id.substring(0, 8) + '...',
+                          color: Color(0xFF8B5CF6),
+                        ),
+
+                        SizedBox(height: 24),
+
+                        // Quick Actions
+                        Text(
+                          'QUICK ACTIONS',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+
+                        if (!user.isAdmin && !user.isSuperAdmin) ...[
+                          _buildActionTile(
+                            icon: Icons.history_rounded,
+                            title: 'Game History',
+                            subtitle: 'View your past games',
+                            color: Color(0xFF06B6D4),
+                            onTap: () {},
+                          ),
+                          SizedBox(height: 12),
+                          _buildActionTile(
+                            icon: Icons.account_balance_wallet_rounded,
+                            title: 'Wallet History',
+                            subtitle: 'View transactions',
+                            color: Color(0xFF10B981),
+                            onTap: () => context.push('/wallet'),
+                          ),
+                          SizedBox(height: 12),
+                        ],
+
+                        _buildActionTile(
+                          icon: Icons.settings_rounded,
+                          title: 'Settings',
+                          subtitle: 'Manage preferences',
+                          color: Color(0xFF6366F1),
+                          onTap: () {},
+                        ),
+                        SizedBox(height: 12),
+                        _buildActionTile(
+                          icon: Icons.help_outline_rounded,
+                          title: 'Help & Support',
+                          subtitle: 'Get assistance',
+                          color: Color(0xFFF59E0B),
+                          onTap: () {},
+                        ),
+
+                        SizedBox(height: 32),
+
+                        // Logout Button
+                        Container(
+                          width: double.infinity,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0xFFEF4444).withOpacity(0.3),
+                                blurRadius: 20,
+                                offset: Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  backgroundColor: Color(0xFF1E293B),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  title: Text(
+                                    'Logout',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  content: Text(
+                                    'Are you sure you want to logout?',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
+                                      child: Text('Cancel'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xFFEF4444),
+                                      ),
+                                      child: Text('Logout'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirm == true) {
+                                final logout = ref.read(logoutActionProvider);
+                                await logout();
+                                if (context.mounted) {
+                                  context.go(Routes.loginRouteName);
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.logout_rounded, color: Colors.white),
+                                SizedBox(width: 12),
+                                Text(
+                                  'Logout',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 40),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          SizedBox(height: 12),
-          // Level Badge
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.purple.shade600, Colors.purple.shade800],
-              ),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.stars, color: Colors.white, size: 18),
-                SizedBox(width: 8),
-                Text(
-                  'Level 25',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
-  Widget _buildStatisticsSection() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 8, bottom: 12),
-            child: Text(
-              'Statistics',
-              style: TextStyle(
-                color: AppColors.lightGrey,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  'Total Wins',
-                  '156',
-                  Icons.emoji_events,
-                  Colors.amber,
-                ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard(
-                  'Games Played',
-                  '200',
-                  Icons.sports_esports,
-                  Colors.blue,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  'Win Rate',
-                  '78%',
-                  Icons.trending_up,
-                  Colors.green,
-                ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard(
-                  'Rank',
-                  '#12',
-                  Icons.leaderboard,
-                  Colors.purple,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildInfoTile({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF2D3748),
-            Color(0xFF1A202C),
-          ],
-        ),
+        color: Color(0xFF1E293B),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.05), width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: color, size: 20),
-              ),
-              Spacer(),
-            ],
-          ),
-          SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              color: AppColors.lightGrey,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
+            child: Icon(icon, color: color, size: 20),
           ),
-          SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: AppColors.lightGrey.withOpacity(0.6),
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAchievementsSection() {
-    final achievements = [
-      {'icon': '🏆', 'name': 'First Win', 'color': Colors.amber},
-      {'icon': '🔥', 'name': '10 Win Streak', 'color': Colors.orange},
-      {'icon': '⚡', 'name': 'Speed Demon', 'color': Colors.yellow},
-      {'icon': '💎', 'name': 'Premium Player', 'color': Colors.blue},
-    ];
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 8, bottom: 12),
-            child: Row(
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Achievements',
+                  label,
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  value,
                   style: TextStyle(
-                    color: AppColors.lightGrey,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: 8),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.amber.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${achievements.length}/12',
-                    style: TextStyle(
-                      color: Colors.amber,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: achievements.length,
-              itemBuilder: (context, index) {
-                final achievement = achievements[index];
-                return Container(
-                  width: 90,
-                  margin: EdgeInsets.only(right: 12),
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFF2D3748),
-                        Color(0xFF1A202C),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: (achievement['color'] as Color).withOpacity(0.3),
-                      width: 2,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        achievement['icon'] as String,
-                        style: TextStyle(fontSize: 32),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        achievement['name'] as String,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: AppColors.lightGrey,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildRecentGamesSection() {
-    final recentGames = [
-      {'result': 'Won', 'prize': '500 ETB', 'time': '2 hours ago', 'isWin': true},
-      {'result': 'Lost', 'prize': '-', 'time': '5 hours ago', 'isWin': false},
-      {'result': 'Won', 'prize': '750 ETB', 'time': '1 day ago', 'isWin': true},
-    ];
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 8, bottom: 12),
-            child: Text(
-              'Recent Games',
-              style: TextStyle(
-                color: AppColors.lightGrey,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          ...recentGames.map((game) => Container(
-            margin: EdgeInsets.only(bottom: 12),
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF2D3748),
-                  Color(0xFF1A202C),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: (game['isWin'] as bool ? Colors.green : Colors.red).withOpacity(0.3),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: (game['isWin'] as bool ? Colors.green : Colors.red).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    game['isWin'] as bool ? Icons.check_circle : Icons.cancel,
-                    color: game['isWin'] as bool ? Colors.green : Colors.red,
-                    size: 24,
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        game['result'] as String,
-                        style: TextStyle(
-                          color: AppColors.lightGrey,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        game['time'] as String,
-                        style: TextStyle(
-                          color: AppColors.lightGrey.withOpacity(0.6),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (game['isWin'] as bool)
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.amber.shade600, Colors.amber.shade800],
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      game['prize'] as String,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          )),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSettingsSection() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          _buildSettingItem(
-            'Edit Profile',
-            Icons.edit,
-            Colors.blue,
-            () {},
-          ),
-          SizedBox(height: 12),
-          _buildSettingItem(
-            'Settings',
-            Icons.settings,
-            Colors.purple,
-            () {},
-          ),
-          SizedBox(height: 12),
-          _buildSettingItem(
-            'Help & Support',
-            Icons.help_outline,
-            Colors.orange,
-            () {},
-          ),
-          SizedBox(height: 12),
-          _buildSettingItem(
-            'Logout',
-            Icons.logout,
-            Colors.red,
-            () {},
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSettingItem(String title, IconData icon, Color color, VoidCallback onTap) {
-    return GestureDetector(
+  Widget _buildActionTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF2D3748),
-              Color(0xFF1A202C),
-            ],
-          ),
+          color: Color(0xFF1E293B),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withOpacity(0.3),
-            width: 1,
-          ),
+          border: Border.all(color: Colors.white.withOpacity(0.05), width: 1),
         ),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
+                gradient: LinearGradient(
+                  colors: [color, color.withOpacity(0.7)],
+                ),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: color, size: 24),
+              child: Icon(icon, color: Colors.white, size: 24),
             ),
             SizedBox(width: 16),
             Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: AppColors.lightGrey,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                ],
               ),
             ),
             Icon(
-              Icons.arrow_forward_ios,
-              color: AppColors.lightGrey.withOpacity(0.4),
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white,
               size: 16,
             ),
           ],

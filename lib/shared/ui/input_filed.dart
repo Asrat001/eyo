@@ -1,21 +1,20 @@
-
 import 'package:eyo_bingo/shared/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class InputField extends StatelessWidget {
-  const InputField(
-      {super.key,
-        required this.hintText,
-        required this.labelText,
-        required this.controller,
-        required this.obscureText,
-        required this.keyboardType,
-        this.prefixIcon,
-        this.suffixIcon,
-        this.validator,
-        this.onChanged,
-        this.onFieldSubmitted
-      });
+  const InputField({
+    super.key,
+    required this.hintText,
+    required this.labelText,
+    required this.controller,
+    required this.obscureText,
+    required this.keyboardType,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.validator,
+    this.onChanged,
+    this.onFieldSubmitted,
+  });
 
   final String hintText;
   final String labelText;
@@ -28,61 +27,52 @@ class InputField extends StatelessWidget {
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
 
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$labelText',
-          style:  TextStyle(
-            color: Colors.grey.shade400,
+          labelText,
+          style: TextStyle(
+            color: Colors.white,
             fontSize: 16,
-            fontWeight: FontWeight.w400, // Medium weight for the label
+            fontWeight: FontWeight.w400,
             letterSpacing: 0.5,
           ),
         ),
-        const SizedBox(height: 4), // Space between label and field
+        const SizedBox(height: 4),
         SizedBox(
           height: 40,
           child: TextFormField(
-            style: const TextStyle(
-              color:AppColors.primary,
-              fontSize: 16,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 16),
             controller: controller,
             obscureText: obscureText,
             keyboardType: keyboardType,
             onChanged: onChanged,
+            onFieldSubmitted: onFieldSubmitted,
             validator: validator,
             decoration: InputDecoration(
-              hintText: '$hintText',
-              // Optional placeholder; matches the empty state
-              hintStyle:  TextStyle(
-                color: Colors.grey.shade50, // White with ~38% opacity
+              hintText: hintText,
+              hintStyle: TextStyle(
+                color: Colors.white.withOpacity(0.5),
                 fontSize: 12,
               ),
-
               filled: true,
-              fillColor:  AppColors.secondary,
+              fillColor: AppColors.secondary,
               prefixIcon: suffixIcon,
-
-              // Exact field background
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 8,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(40),
-                // Fully rounded corners
-                borderSide: BorderSide.none, // No border
+                borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(40),
-                borderSide:  BorderSide(
-                  color: Colors.grey.shade500,
-                  // Optional gold focus ring to match app theme
+                borderSide: BorderSide(
+                  color: Colors.white.withOpacity(0.2),
                   width: 0.5,
                 ),
               ),
@@ -90,7 +80,6 @@ class InputField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(40),
                 borderSide: const BorderSide(
                   color: AppColors.primary,
-                  // Optional gold focus ring to match app theme
                   width: 2,
                 ),
               ),
@@ -99,4 +88,5 @@ class InputField extends StatelessWidget {
         ),
       ],
     );
-  }}
+  }
+}
