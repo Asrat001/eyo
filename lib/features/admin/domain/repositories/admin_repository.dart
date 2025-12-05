@@ -37,4 +37,14 @@ abstract class AdminRepository {
     String gameType,
     int cost,
   );
+
+  Future<ApiResponse<Map<String, dynamic>>> createGame({
+    required int maxPlayers,
+    String winningPattern = 'any-line',
+    int autoCallInterval = 3000,
+    String markingMode = 'auto',
+    double playerEntryFee = 10,
+    int profitPercentage = 10,
+  });
+
 }

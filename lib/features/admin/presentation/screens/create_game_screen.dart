@@ -1,4 +1,7 @@
-import 'package:eyo_bingo/features/number_bingo/presentation/providers/number_bingo_providers.dart';
+import 'package:eyo_bingo/features/admin/presentation/providers/admin_providers.dart';
+import 'package:eyo_bingo/features/admin/presentation/providers/states/create_game_state.dart';
+import 'package:eyo_bingo/features/admin/presentation/widgets/drop_down.dart';
+import 'package:eyo_bingo/features/admin/presentation/widgets/input_filed.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,10 +22,6 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
   final _profitController = TextEditingController(text: '10');
   final _autoCallIntervalController = TextEditingController(text: '3000');
 
-  String _selectedPattern = 'any-line';
-  String _selectedMode = 'auto';
-  bool _isCreating = false;
-
   @override
   void dispose() {
     _maxPlayersController.dispose();
@@ -32,29 +31,29 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
     super.dispose();
   }
 
-  Future<void> _handleCreateGame() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+  Future<void> _handleCreateGame({
+    required String selectedPattern,
+    required String selectedMode,
+  }) async {
+    ref
+        .read(createGameNotifierProvider.notifier)
+        .createGame(
+          maxPlayers: int.parse(_maxPlayersController.text),
+          playerEntryFee: double.parse(_entryFeeController.text),
+          profitPercentage: int.parse(_profitController.text),
+          autoCallInterval: int.parse(_autoCallIntervalController.text),
+          selectedPattern: selectedPattern,
+          selectedMode: selectedMode,
+        );
+  }
 
-    setState(() => _isCreating = true);
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(createGameNotifierProvider);
 
-    final createGame = ref.read(createGameActionProvider);
-    final result = await createGame(
-      maxPlayers: int.parse(_maxPlayersController.text),
-      playerEntryFee: double.parse(_entryFeeController.text),
-      profitPercentage: int.parse(_profitController.text),
-      autoCallInterval: int.parse(_autoCallIntervalController.text),
-      winningPattern: _selectedPattern,
-      markingMode: _selectedMode,
-    );
-
-    if (!mounted) return;
-
-    setState(() => _isCreating = false);
-
-    result.when(
-      success: (_) {
+    // Listen to state changes for success/error handling
+    ref.listen<CreateGameState>(createGameNotifierProvider, (previous, next) {
+      if (next.isSuccess) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Game created successfully!'),
@@ -62,23 +61,20 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
             behavior: SnackBarBehavior.floating,
           ),
         );
-        ref.read(fetchGamesActionProvider)();
+        ref.read(createGameNotifierProvider.notifier).resetState();
         context.pop();
-      },
-      failure: (error) {
+      } else if (next.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $error'),
+            content: Text('Error: ${next.error}'),
             backgroundColor: Color(0xFFEF4444),
             behavior: SnackBarBehavior.floating,
           ),
         );
-      },
-    );
-  }
+        ref.read(createGameNotifierProvider.notifier).resetState();
+      }
+    });
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF0A0E27),
       body: CustomScrollView(
@@ -88,9 +84,9 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
             expandedHeight: 140,
             pinned: true,
             backgroundColor: Color(0xFF0A0E27),
-                      systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-              ),
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+            ),
             leading: IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => context.pop(),
@@ -182,7 +178,7 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
                     SizedBox(height: 16),
 
                     // Max Players
-                    _buildInputField(
+                    CustomInputField(
                       controller: _maxPlayersController,
                       label: 'Maximum Players',
                       hint: 'Enter max players',
@@ -202,7 +198,7 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
                     SizedBox(height: 16),
 
                     // Entry Fee
-                    _buildInputField(
+                    CustomInputField(
                       controller: _entryFeeController,
                       label: 'Player Entry Fee',
                       hint: 'Enter entry fee',
@@ -224,7 +220,7 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
                     SizedBox(height: 16),
 
                     // Profit Percentage
-                    _buildInputField(
+                    CustomInputField(
                       controller: _profitController,
                       label: 'Profit Percentage',
                       hint: 'Enter profit %',
@@ -245,11 +241,12 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
                     SizedBox(height: 16),
 
                     // Auto Call Interval
-                    _buildInputField(
+                    CustomInputField(
                       controller: _autoCallIntervalController,
                       label: 'Auto Call Interval (ms)',
                       hint: 'Enter interval',
                       icon: Icons.timer_rounded,
+                      enabled: false,
                       helperText:
                           'Time between number calls (e.g., 3000 = 3 seconds)',
                       keyboardType: TextInputType.number,
@@ -280,67 +277,71 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
                     SizedBox(height: 16),
 
                     // Winning Pattern
-                    _buildDropdownField(
+                    CustomDropDown(
                       label: 'Winning Pattern',
-                      value: _selectedPattern,
+                      value: state.selectedPattern,
                       icon: Icons.pattern_rounded,
                       items: [
-                        _DropdownItem(
+                        DropdownItem(
                           'any-line',
                           'Any Line',
                           Icons.horizontal_rule_rounded,
                         ),
-                        _DropdownItem(
+                        DropdownItem(
                           'horizontal',
                           'Horizontal Only',
                           Icons.horizontal_rule_rounded,
                         ),
-                        _DropdownItem(
+                        DropdownItem(
                           'vertical',
                           'Vertical Only',
                           Icons.more_vert_rounded,
                         ),
-                        _DropdownItem(
+                        DropdownItem(
                           'diagonal',
                           'Diagonal Only',
                           Icons.trending_up_rounded,
                         ),
-                        _DropdownItem(
+                        DropdownItem(
                           'four-corners',
                           'Four Corners',
                           Icons.crop_square_rounded,
                         ),
-                        _DropdownItem(
+                        DropdownItem(
                           'full-house',
                           'Full House',
                           Icons.grid_on_rounded,
                         ),
                       ],
                       onChanged: (value) {
-                        setState(() => _selectedPattern = value!);
+                        ref
+                            .read(createGameNotifierProvider.notifier)
+                            .setSelectedPattern(value!);
                       },
                     ),
                     SizedBox(height: 16),
 
                     // Marking Mode
-                    _buildDropdownField(
+                    CustomDropDown(
                       label: 'Marking Mode',
-                      value: _selectedMode,
+                      value: state.selectedMode,
                       icon: Icons.touch_app_rounded,
                       items: [
-                        _DropdownItem(
+                        DropdownItem(
                           'auto',
                           'Auto Mark',
                           Icons.auto_awesome_rounded,
                         ),
-                        _DropdownItem(
+                        DropdownItem(
                           'manual',
                           'Manual Mark',
                           Icons.touch_app_rounded,
                         ),
                       ],
                       onChanged: (value) {
-                        setState(() => _selectedMode = value!);
+                        ref
+                            .read(createGameNotifierProvider.notifier)
+                            .setSelectedMode(value!);
                       },
                     ),
 
@@ -352,7 +353,7 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
                       height: 56,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: _isCreating
+                          colors: state.isLoading
                               ? [
                                   Colors.white.withOpacity(0.3),
                                   Colors.white.withOpacity(0.2),
@@ -360,7 +361,7 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
                               : [Color(0xFF3B82F6), Color(0xFF2563EB)],
                         ),
                         borderRadius: BorderRadius.circular(16),
-                        boxShadow: _isCreating
+                        boxShadow: state.isLoading
                             ? []
                             : [
                                 BoxShadow(
@@ -371,7 +372,16 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
                               ],
                       ),
                       child: ElevatedButton(
-                        onPressed: _isCreating ? null : _handleCreateGame,
+                        onPressed: state.isLoading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  _handleCreateGame(
+                                    selectedPattern: state.selectedPattern,
+                                    selectedMode: state.selectedMode,
+                                  );
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
@@ -379,7 +389,7 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: _isCreating
+                        child: state.isLoading
                             ? SizedBox(
                                 width: 24,
                                 height: 24,
@@ -419,137 +429,4 @@ class _CreateGameScreenState extends ConsumerState<CreateGameScreen> {
       ),
     );
   }
-
-  Widget _buildInputField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required IconData icon,
-    String? helperText,
-    TextInputType? keyboardType,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          validator: validator,
-          style: TextStyle(color: Colors.white, fontSize: 16),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
-            helperText: helperText,
-            helperStyle: TextStyle(
-              color: Colors.white.withOpacity(0.5),
-              fontSize: 12,
-            ),
-            prefixIcon: Icon(icon, color: Color(0xFF3B82F6)),
-            filled: true,
-            fillColor: Color(0xFF1E293B),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Color(0xFF3B82F6), width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Color(0xFFEF4444)),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Color(0xFFEF4444), width: 2),
-            ),
-            errorStyle: TextStyle(color: Color(0xFFEF4444)),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdownField({
-    required String label,
-    required String value,
-    required IconData icon,
-    required List<_DropdownItem> items,
-    required void Function(String?) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: Color(0xFF1E293B),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: value,
-            dropdownColor: Color(0xFF1E293B),
-            style: TextStyle(color: Colors.white, fontSize: 16),
-            decoration: InputDecoration(
-              prefixIcon: Icon(icon, color: Color(0xFF3B82F6)),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-            items: items.map((item) {
-              return DropdownMenuItem(
-                value: item.value,
-                child: Row(
-                  children: [
-                    Icon(
-                      item.icon,
-                      size: 20,
-                      color: Colors.white.withOpacity(0.7),
-                    ),
-                    SizedBox(width: 12),
-                    Text(item.label, style: TextStyle(color: Colors.white)),
-                  ],
-                ),
-              );
-            }).toList(),
-            onChanged: onChanged,
-            icon: Icon(Icons.arrow_drop_down, color: Colors.white),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _DropdownItem {
-  final String value;
-  final String label;
-  final IconData icon;
-
-  _DropdownItem(this.value, this.label, this.icon);
 }

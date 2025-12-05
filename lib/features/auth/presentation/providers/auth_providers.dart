@@ -1,3 +1,4 @@
+import 'package:eyo_bingo/core/utils/network_exceptions_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/data/models/bingo/user_model.dart';
 import '../../../../core/models/api_response.dart';
@@ -44,7 +45,7 @@ final loginActionProvider =
               ref.read(authLoadingProvider.notifier).state = false;
             },
             failure: (error) {
-              ref.read(authErrorProvider.notifier).state = error.toString();
+              ref.read(authErrorProvider.notifier).state = NetworkExceptions.getErrorMessage(error);
               ref.read(authLoadingProvider.notifier).state = false;
             },
           );

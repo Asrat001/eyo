@@ -1,3 +1,11 @@
+import 'package:eyo_bingo/core/utils/network_exceptions_utils.dart';
+import 'package:eyo_bingo/features/admin/domain/repositories/super_admin_repository.dart';
+import 'package:eyo_bingo/features/admin/presentation/providers/notifiers/admin_detail_notifire.dart';
+import 'package:eyo_bingo/features/admin/presentation/providers/notifiers/create_game_notifier.dart';
+import 'package:eyo_bingo/features/admin/presentation/providers/notifiers/super_admin_notifier.dart';
+import 'package:eyo_bingo/features/admin/presentation/providers/states/admin_detail_state.dart';
+import 'package:eyo_bingo/features/admin/presentation/providers/states/create_game_state.dart';
+import 'package:eyo_bingo/features/admin/presentation/providers/states/super_admin_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/data/models/bingo/user_model.dart';
 import '../../../../core/models/api_response.dart';
@@ -7,6 +15,26 @@ import '../../../admin/domain/repositories/admin_repository.dart';
 // ============= REPOSITORY PROVIDER =============
 final adminRepositoryProvider = Provider<AdminRepository>(
   (ref) => sl<AdminRepository>(),
+);
+
+
+final createGameNotifierProvider = StateNotifierProvider<CreateGameNotifier, CreateGameState>(
+  (ref) => CreateGameNotifier(
+     sl<AdminRepository>(),
+  ),
+);
+
+
+final superAdminNotifierProvider = StateNotifierProvider<SuperAdminNotifier, SuperAdminState>(
+  (ref) => SuperAdminNotifier(
+     sl<SuperAdminRepository>(),
+  ),
+);
+
+final adminDetailNotifierProvider = StateNotifierProvider<AdminDetailNotifier, AdminDetailState>(
+  (ref) => AdminDetailNotifier(
+     sl<SuperAdminRepository>(),
+  ),
 );
 
 // ============= STATE PROVIDERS =============
@@ -68,7 +96,7 @@ final fetchAdminsActionProvider = Provider<Future<void> Function()>((ref) {
           ref.read(adminLoadingProvider.notifier).state = false;
         },
         failure: (error) {
-          ref.read(adminErrorProvider.notifier).state = error.toString();
+          ref.read(adminErrorProvider.notifier).state = NetworkExceptions.getErrorMessage(error);
           ref.read(adminLoadingProvider.notifier).state = false;
         },
       );

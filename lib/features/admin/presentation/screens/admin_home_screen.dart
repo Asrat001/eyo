@@ -1,3 +1,4 @@
+import 'package:eyo_bingo/features/admin/presentation/widgets/stat_card.dart';
 import 'package:eyo_bingo/features/auth/presentation/providers/auth_providers.dart';
 import 'package:eyo_bingo/features/number_bingo/presentation/providers/number_bingo_providers.dart';
 import 'package:eyo_bingo/shared/theme/app_colors.dart';
@@ -221,25 +222,25 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                         mainAxisSpacing: 16,
                         childAspectRatio: 1.24,
                         children: [
-                          _buildStatCard(
+                          StatCard(
                             title: 'Total Games',
                             value: '${games.length}',
                             icon: Icons.games_rounded,
                             gradient: [Color(0xFF3B82F6), Color(0xFF2563EB)],
                           ),
-                          _buildStatCard(
+                          StatCard(
                             title: 'Active Games',
                             value: '$activeGames',
                             icon: Icons.play_circle_rounded,
                             gradient: [Color(0xFF10B981), Color(0xFF059669)],
                           ),
-                          _buildStatCard(
+                          StatCard(
                             title: 'Ready Games',
                             value: '$readyGames',
                             icon: Icons.check_circle_rounded,
                             gradient: [Color(0xFFF59E0B), Color(0xFFD97706)],
                           ),
-                          _buildStatCard(
+                          StatCard(
                             title: 'Total Players',
                             value: '$totalPlayers',
                             icon: Icons.people_rounded,
@@ -458,71 +459,6 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
     );
   }
 
-  Widget _buildStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required List<Color> gradient,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: gradient,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: gradient[0].withOpacity(0.4),
-            blurRadius: 24,
-            offset: Offset(0, 12),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: Colors.white, size: 28),
-            ),
-            SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
-              ),
-            ),
-            SizedBox(height: 2),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Color _getStatusColor(String status) {
     return switch (status) {

@@ -393,96 +393,93 @@ class _SuperAdminAdminsScreenState
                 ],
               ),
             )
-          : RefreshIndicator(
-              onRefresh: () => ref.read(fetchAdminsActionProvider)(),
-              child: ListView.builder(
-                padding: EdgeInsets.all(16),
-                itemCount: admins.length,
-                itemBuilder: (context, index) {
-                  final admin = admins[index];
-                  return Card(
-                    margin: EdgeInsets.only(bottom: 16),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: admin.isSuperAdmin
-                            ? Colors.purple
-                            : Colors.blue,
-                        child: Icon(
-                          admin.isSuperAdmin
-                              ? Icons.admin_panel_settings
-                              : Icons.person,
-                          color: Colors.white,
-                        ),
-                      ),
-                      title: Text(
-                        admin.username,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Icon(Icons.stars, size: 16, color: Colors.amber),
-                              SizedBox(width: 4),
-                              Text('Credits: ${admin.credits}'),
-                            ],
-                          ),
-                          if (admin.isSuperAdmin)
-                            Padding(
-                              padding: EdgeInsets.only(top: 4),
-                              child: Chip(
-                                label: Text(
-                                  'Super Admin',
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                                backgroundColor: Colors.purple.withOpacity(0.2),
-                                padding: EdgeInsets.zero,
-                              ),
-                            ),
-                        ],
-                      ),
-                      trailing: PopupMenuButton(
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            child: ListTile(
-                              leading: Icon(Icons.edit),
-                              title: Text('Set Credits'),
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                            onTap: () {
-                              Future.delayed(Duration.zero, () {
-                                _showManageCreditsBottomSheet(
-                                  admin.id,
-                                  admin.username,
-                                  admin.credits,
-                                );
-                              });
-                            },
-                          ),
-                          PopupMenuItem(
-                            child: ListTile(
-                              leading: Icon(Icons.add_circle),
-                              title: Text('Add Credits'),
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                            onTap: () {
-                              Future.delayed(Duration.zero, () {
-                                _showAddCreditsBottomSheet(
-                                  admin.id,
-                                  admin.username,
-                                );
-                              });
-                            },
-                          ),
-                        ],
-                      ),
+          : ListView.builder(
+            padding: EdgeInsets.all(16),
+            itemCount: admins.length,
+            itemBuilder: (context, index) {
+              final admin = admins[index];
+              return Card(
+                margin: EdgeInsets.only(bottom: 16),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: admin.isSuperAdmin
+                        ? Colors.purple
+                        : Colors.blue,
+                    child: Icon(
+                      admin.isSuperAdmin
+                          ? Icons.admin_panel_settings
+                          : Icons.person,
+                      color: Colors.white,
                     ),
-                  );
-                },
-              ),
-            ),
+                  ),
+                  title: Text(
+                    admin.username,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.stars, size: 16, color: Colors.amber),
+                          SizedBox(width: 4),
+                          Text('Credits: ${admin.credits}'),
+                        ],
+                      ),
+                      if (admin.isSuperAdmin)
+                        Padding(
+                          padding: EdgeInsets.only(top: 4),
+                          child: Chip(
+                            label: Text(
+                              'Super Admin',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                            backgroundColor: Colors.purple.withOpacity(0.2),
+                            padding: EdgeInsets.zero,
+                          ),
+                        ),
+                    ],
+                  ),
+                  trailing: PopupMenuButton(
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: ListTile(
+                          leading: Icon(Icons.edit),
+                          title: Text('Set Credits'),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        onTap: () {
+                          Future.delayed(Duration.zero, () {
+                            _showManageCreditsBottomSheet(
+                              admin.id,
+                              admin.username,
+                              admin.credits,
+                            );
+                          });
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: ListTile(
+                          leading: Icon(Icons.add_circle),
+                          title: Text('Add Credits'),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        onTap: () {
+                          Future.delayed(Duration.zero, () {
+                            _showAddCreditsBottomSheet(
+                              admin.id,
+                              admin.username,
+                            );
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
     );
   }
 }

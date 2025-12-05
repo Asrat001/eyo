@@ -1,5 +1,4 @@
 import 'package:eyo_bingo/core/data/models/bingo/bingo_game_detail_model.dart';
-import 'package:eyo_bingo/core/data/models/bingo/bingo_game_model.dart';
 import 'package:eyo_bingo/core/utils/network_exceptions_utils.dart';
 import 'package:eyo_bingo/features/number_bingo/presentation/providers/number_bingo_providers.dart';
 import 'package:eyo_bingo/shared/theme/app_colors.dart';

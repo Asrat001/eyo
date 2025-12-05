@@ -75,4 +75,25 @@ class AdminRepositoryImpl implements AdminRepository {
   ) async {
     return await _remoteDataSource.setGameCost(adminId, gameType, cost);
   }
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createGame({
+    required int maxPlayers,
+    String winningPattern = 'any-line',
+    int autoCallInterval = 3000,
+    String markingMode = 'auto',
+    double playerEntryFee = 10,
+    int profitPercentage = 10,
+  }) async {
+    return await _remoteDataSource.createGame(
+      maxPlayers: maxPlayers,
+      winningPattern: winningPattern,
+      autoCallInterval: autoCallInterval,
+      markingMode: markingMode,
+      playerEntryFee: playerEntryFee,
+      profitPercentage: profitPercentage,
+    );
+  }
+
+
 }

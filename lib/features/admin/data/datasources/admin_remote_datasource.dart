@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+
 import 'package:logger/logger.dart';
 import '../../../../core/data/models/bingo/user_model.dart';
 import '../../../../core/models/api_response.dart';
@@ -201,4 +201,37 @@ class AdminRemoteDataSource {
       return ApiResponse.failure(error: NetworkExceptions.getDioException(e));
     }
   }
+
+
+  Future<ApiResponse<Map<String, dynamic>>> createGame({
+    required int maxPlayers,
+    String winningPattern = 'any-line',
+    int autoCallInterval = 3000,
+    String markingMode = 'auto',
+    double playerEntryFee = 10,
+    int profitPercentage = 10,
+  }) async {
+    try {
+      final response = await _dioClient
+          .client(requireAuth: true)
+          .post(
+            '/bingo/create',
+            data: {
+              'maxPlayers': maxPlayers,
+              'winningPattern': winningPattern,
+              'autoCallInterval': autoCallInterval,
+              'markingMode': markingMode,
+              'playerEntryFee': playerEntryFee,
+              'profitPercentage': profitPercentage,
+            },
+          );
+
+      _logger.i('Created bingo game');
+      return ApiResponse.success(data: response.data);
+    } catch (e) {
+      _logger.e('Failed to create game', error: e);
+      return ApiResponse.failure(error: NetworkExceptions.getDioException(e));
+    }
+  }
+
 }

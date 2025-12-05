@@ -1,3 +1,4 @@
+import 'package:eyo_bingo/core/utils/network_exceptions_utils.dart';
 import 'package:eyo_bingo/features/auth/presentation/providers/auth_providers.dart';
 import 'package:eyo_bingo/shared/routes/route_names.dart';
 import 'package:eyo_bingo/shared/theme/app_colors.dart';
@@ -56,7 +57,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         // Error is already set in provider, show snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error.toString()),
+            content: Text(NetworkExceptions.getErrorMessage(error)),
             backgroundColor: Colors.red,
           ),
         );

@@ -1,6 +1,7 @@
 import 'package:eyo_bingo/features/admin/presentation/providers/admin_providers.dart';
-import 'package:eyo_bingo/features/auth/presentation/providers/auth_providers.dart';
-import 'package:eyo_bingo/features/number_bingo/presentation/providers/number_bingo_providers.dart';
+import 'package:eyo_bingo/features/admin/presentation/widgets/admin_analytics_card.dart';
+import 'package:eyo_bingo/features/admin/presentation/widgets/stat_card.dart';
+import 'package:eyo_bingo/features/admin/presentation/widgets/super_admin_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,153 +19,33 @@ class _SuperAdminHomeScreenState extends ConsumerState<SuperAdminHomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(fetchGamesActionProvider)();
-      ref.read(fetchAdminsActionProvider)();
-      ref.read(fetchPlayersActionProvider)();
+      ref.read(superAdminNotifierProvider.notifier).getAnalytics();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(currentUserProvider);
-    final games = ref.watch(availableGamesProvider);
-    final admins = ref.watch(adminsListProvider);
-    final players = ref.watch(playersListProvider);
-    final isLoading =
-        ref.watch(bingoLoadingProvider) || ref.watch(adminLoadingProvider);
-
-    final totalCredits = admins.fold<int>(
-      0,
-      (sum, admin) => sum + admin.credits,
-    );
-    final activeGames = games.where((g) => g.status == 'active').length;
+    final analytics = ref.watch(superAdminNotifierProvider);
+    final totalAdmins = analytics.analytics?.overall.totalAdmins ?? 0;
+    final totalPlayers = analytics.analytics?.overall.totalPlayers ?? 0;
+    final totalRevenue = analytics.analytics?.overall.totalRevenue ?? 0;
+    final totalProfit = analytics.analytics?.overall.totalProfit ?? 0;
+    final activeGames = analytics.analytics?.overall.totalActiveGames ?? 0;
+    final totalCredits = analytics.analytics?.overall.totalCreditsInSystem ?? 0;
+    final admins = analytics.analytics?.adminAnalytics;
 
     return Scaffold(
       backgroundColor: Color(0xFF0A0E27),
       body: RefreshIndicator(
         onRefresh: () async {
-          await ref.read(fetchGamesActionProvider)();
-          await ref.read(fetchAdminsActionProvider)();
-          await ref.read(fetchPlayersActionProvider)();
+          await ref.read(superAdminNotifierProvider.notifier).getAnalytics();
         },
         color: Color(0xFF9333EA),
         backgroundColor: Color(0xFF1E293B),
         child: CustomScrollView(
           slivers: [
             // App Bar
-            SliverAppBar(
-              expandedHeight: 180,
-              pinned: true,
-              backgroundColor: Color(0xFF0A0E27),
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFF9333EA),
-                        Color(0xFF7E22CE),
-                        Color(0xFF0A0E27),
-                      ],
-                    ),
-                  ),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(20, 40, 20, 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Icon(
-                                  Icons.admin_panel_settings,
-                                  color: Colors.white,
-                                  size: 28,
-                                ),
-                              ),
-                              SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Super Admin',
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(0.8),
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    Text(
-                                      user?.username ?? 'Super Admin',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.verified,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'FULL ACCESS',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.refresh_rounded, color: Colors.white),
-                  onPressed: () {
-                    ref.read(fetchGamesActionProvider)();
-                    ref.read(fetchAdminsActionProvider)();
-                    ref.read(fetchPlayersActionProvider)();
-                  },
-                ),
-              ],
-            ),
-
+            const SuperAdminAppBar(),
             // Content
             SliverToBoxAdapter(
               child: Padding(
@@ -182,9 +63,7 @@ class _SuperAdminHomeScreenState extends ConsumerState<SuperAdminHomeScreen> {
                         letterSpacing: 1.5,
                       ),
                     ),
-                    SizedBox(height: 16),
-
-                    if (isLoading)
+                    if (analytics.isLoading)
                       Center(
                         child: Padding(
                           padding: EdgeInsets.all(40),
@@ -198,45 +77,63 @@ class _SuperAdminHomeScreenState extends ConsumerState<SuperAdminHomeScreen> {
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         crossAxisCount: 2,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: 1.4,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                        childAspectRatio: 1.22,
                         children: [
-                          _buildStatCard(
+                          StatCard(
+                            title: 'Total Revenue',
+                            value: "$totalRevenue ETB",
+                            icon: Icons.money,
+                            gradient: [
+                              Color.fromARGB(255, 89, 207, 34),
+                              Color.fromARGB(255, 96, 173, 7),
+                            ],
+                          ),
+                          StatCard(
+                            title: 'Total Profit',
+                            value: "$totalProfit ETB",
+                            icon: Icons.money,
+                            gradient: [
+                              Color.fromARGB(255, 72, 191, 238),
+                              Color.fromARGB(255, 9, 173, 214),
+                            ],
+                          ),
+                          StatCard(
                             title: 'Total Admins',
-                            value: '${admins.length}',
+                            value: totalAdmins.toString(),
                             icon: Icons.admin_panel_settings_rounded,
                             gradient: [Color(0xFF3B82F6), Color(0xFF2563EB)],
                           ),
-                          _buildStatCard(
+                          StatCard(
                             title: 'Total Players',
-                            value: '${players.length}',
+                            value: totalPlayers.toString(),
                             icon: Icons.people_rounded,
                             gradient: [Color(0xFF10B981), Color(0xFF059669)],
                           ),
-                          _buildStatCard(
+                          StatCard(
                             title: 'Active Games',
-                            value: '$activeGames',
+                            value: activeGames.toString(),
                             icon: Icons.play_circle_rounded,
                             gradient: [Color(0xFFF59E0B), Color(0xFFD97706)],
                           ),
-                          _buildStatCard(
+                          StatCard(
                             title: 'Total Credits',
-                            value: '$totalCredits',
+                            value: totalCredits.toString(),
                             icon: Icons.stars_rounded,
                             gradient: [Color(0xFFFBBF24), Color(0xFFF59E0B)],
                           ),
                         ],
                       ),
 
-                    SizedBox(height: 32),
+                    SizedBox(height: 16),
 
                     // Recent Admins
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'RECENT ADMINS',
+                          'ADMINS Performance'.toUpperCase(),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -253,14 +150,13 @@ class _SuperAdminHomeScreenState extends ConsumerState<SuperAdminHomeScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 12),
-
-                    if (admins.isEmpty)
+                    SizedBox(height: 8),
+                    if (admins == null)
                       Container(
                         padding: EdgeInsets.all(40),
                         decoration: BoxDecoration(
                           color: Color(0xFF1E293B),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: Colors.white.withOpacity(0.05),
                             width: 1,
@@ -287,203 +183,30 @@ class _SuperAdminHomeScreenState extends ConsumerState<SuperAdminHomeScreen> {
                         ),
                       )
                     else
-                      ...admins
-                          .take(3)
-                          .map(
-                            (admin) => Padding(
-                              padding: EdgeInsets.only(bottom: 12),
-                              child: Container(
-                                padding: EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFF1E293B),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.05),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: admin.isSuperAdmin
-                                              ? [
-                                                  Color(0xFF9333EA),
-                                                  Color(0xFF7E22CE),
-                                                ]
-                                              : [
-                                                  Color(0xFF3B82F6),
-                                                  Color(0xFF2563EB),
-                                                ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Icon(
-                                        admin.isSuperAdmin
-                                            ? Icons.admin_panel_settings
-                                            : Icons.shield,
-                                        color: Colors.white,
-                                        size: 24,
-                                      ),
-                                    ),
-                                    SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                admin.username,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              if (admin.isSuperAdmin) ...[
-                                                SizedBox(width: 8),
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: 8,
-                                                    vertical: 2,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: Color(
-                                                      0xFF9333EA,
-                                                    ).withOpacity(0.2),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                    border: Border.all(
-                                                      color: Color(0xFF9333EA),
-                                                      width: 1,
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    'SUPER',
-                                                    style: TextStyle(
-                                                      color: Color(0xFF9333EA),
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ],
-                                          ),
-                                          SizedBox(height: 4),
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.stars,
-                                                size: 14,
-                                                color: Color(0xFFFBBF24),
-                                              ),
-                                              SizedBox(width: 4),
-                                              Text(
-                                                '${admin.credits} credits',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 13,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: admins.length > 3 ? 3 : admins.length,
+                        itemBuilder: (context, index) {
+                          final admin = admins[index];
+                          return AdminAnalyticsCard(
+                            username: admin.username,
+                            totalRevenue: admin.combined.totalRevenue,
+                            totalProfit: admin.combined.totalProfit,
+                            currentCredits: admin.currentCredits,
+                            completedGames: admin.combined.completedGames,
+                            totalPlayers: admin.combined.totalPlayers,
+                            onTap: () {
+                           
+                            },
+                          );
+                        },
+                      ),
 
                     SizedBox(height: 20),
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required List<Color> gradient,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: gradient,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: gradient[0].withOpacity(0.4),
-            blurRadius: 24,
-            offset: Offset(0, 12),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: Colors.white, size: 28),
-            ),
-            SizedBox(height: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  value,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                SizedBox(height: 6),
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
             ),
           ],
         ),

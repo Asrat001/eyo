@@ -2,8 +2,11 @@ import 'package:eyo_bingo/core/service/dio_service.dart';
 import 'package:eyo_bingo/core/service/hive_service.dart';
 import 'package:eyo_bingo/core/service/socket_service.dart';
 import 'package:eyo_bingo/features/admin/data/datasources/admin_remote_datasource.dart';
+import 'package:eyo_bingo/features/admin/data/datasources/super_admin_remotedatasoursce.dart';
 import 'package:eyo_bingo/features/admin/data/repositories/admin_repository_impl.dart';
+import 'package:eyo_bingo/features/admin/data/repositories/super_admin_repository_impl.dart';
 import 'package:eyo_bingo/features/admin/domain/repositories/admin_repository.dart';
+import 'package:eyo_bingo/features/admin/domain/repositories/super_admin_repository.dart';
 import 'package:eyo_bingo/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:eyo_bingo/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:eyo_bingo/features/auth/domain/repositories/auth_repository.dart';
@@ -56,4 +59,10 @@ Future<void> serviceLocator({String prefixBox = ''}) async {
     () => AdminRemoteDataSource(sl()),
   );
   sl.registerLazySingleton<AdminRepository>(() => AdminRepositoryImpl(sl()));
+
+  // Super Admin
+  sl.registerLazySingleton<SuperAdminRemoteDataSource>(
+    () => SuperAdminRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<SuperAdminRepository>(() => SuperAdminRepositoryImpl(sl()));
 }
